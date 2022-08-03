@@ -1,5 +1,5 @@
 {
-    "name": "backpack/newscrud",
+    "name": "hacoidev/newscrud",
     "type": "library",
     "description": "An admin panel for news with categories and tags, using Backpack\\CRUD on Laravel 5.",
     "keywords": [
@@ -19,8 +19,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "backpack/crud": "^5.0",
-        "backpack/pro": "^1.0",
+        "hacoidev/crud": "^1.0",
         "cviebrock/eloquent-sluggable": "^9.0||^8.0||^7.0||^6.0||4.8"
     },
     "require-dev": {
