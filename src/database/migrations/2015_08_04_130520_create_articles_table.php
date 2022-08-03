@@ -16,11 +16,15 @@ class CreateArticlesTable extends Migration
             $table->increments('id');
             $table->integer('category_id')->unsigned();
             $table->string('title');
-            $table->string('slug')->default('');
-            $table->text('content');
+            $table->string('slug')->unique();
+            $table->longText('content');
             $table->string('image')->nullable();
             $table->enum('status', ['PUBLISHED', 'DRAFT'])->default('PUBLISHED');
-            $table->date('date');
+            $table->string('seo_title')->nullable();
+            $table->text('excerpt')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->text('meta_keywords')->nullable();
+            $table->timestamp('published_at')->nullable();
             $table->boolean('featured')->default(0);
             $table->timestamps();
             $table->softDeletes();

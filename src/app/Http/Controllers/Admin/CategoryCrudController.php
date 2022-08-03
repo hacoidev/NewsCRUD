@@ -14,17 +14,18 @@ class CategoryCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ReorderOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\InlineCreateOperation;
 
     public function setup()
     {
         CRUD::setModel("Backpack\NewsCRUD\app\Models\Category");
-        CRUD::setRoute(config('backpack.base.route_prefix', 'admin').'/category');
+        CRUD::setRoute(config('backpack.base.route_prefix', 'admin') . '/category');
         CRUD::setEntityNameStrings('category', 'categories');
     }
 
     protected function setupListOperation()
     {
+        $this->authorize('browse', $this->crud->model);
+
         CRUD::addColumn('name');
         CRUD::addColumn('slug');
         CRUD::addColumn('parent');
@@ -34,7 +35,7 @@ class CategoryCrudController extends CrudController
             'name'      => 'articles', // the method that defines the relationship in your Model
             'wrapper'   => [
                 'href' => function ($crud, $column, $entry, $related_key) {
-                    return backpack_url('article?category_id='.$entry->getKey());
+                    return backpack_url('article?category_id=' . $entry->getKey());
                 },
             ],
         ]);
@@ -42,6 +43,8 @@ class CategoryCrudController extends CrudController
 
     protected function setupShowOperation()
     {
+        $this->authorize('browse', $this->crud->getEntryWithLocale($this->crud->getCurrentEntryId()));
+
         $this->setupListOperation();
 
         CRUD::addColumn('created_at');
@@ -50,6 +53,8 @@ class CategoryCrudController extends CrudController
 
     protected function setupCreateOperation()
     {
+        $this->authorize('create', $this->crud->model);
+
         CRUD::setValidation(CategoryRequest::class);
 
         CRUD::addField([
@@ -74,11 +79,34 @@ class CategoryCrudController extends CrudController
 
     protected function setupUpdateOperation()
     {
-        $this->setupCreateOperation();
+        $this->authorize('update', $this->crud->getEntryWithLocale($this->crud->getCurrentEntryId()));
+
+        CRUD::setValidation(CategoryRequest::class);
+
+        CRUD::addField([
+            'name' => 'name',
+            'label' => 'Name',
+        ]);
+        CRUD::addField([
+            'name' => 'slug',
+            'label' => 'Slug (URL)',
+            'type' => 'text',
+            'hint' => 'Will be automatically generated from your name, if left empty.',
+            // 'disabled' => 'disabled'
+        ]);
+        CRUD::addField([
+            'label' => 'Parent',
+            'type' => 'select',
+            'name' => 'parent_id',
+            'entity' => 'parent',
+            'attribute' => 'name',
+        ]);
     }
 
     protected function setupReorderOperation()
     {
+        $this->authorize('reorder', $this->crud->model);
+
         CRUD::set('reorder.label', 'name');
         CRUD::set('reorder.max_level', 2);
     }

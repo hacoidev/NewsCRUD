@@ -5,12 +5,15 @@ namespace Backpack\NewsCRUD\app\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
+use Hacoidev\CachingModel\Contracts\Cacheable;
+use Hacoidev\CachingModel\HasCache;
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model
+class Tag extends Model implements Cacheable
 {
     use CrudTrait;
     use Sluggable, SluggableScopeHelpers;
+    use HasCache;
 
     /*
     |--------------------------------------------------------------------------
@@ -21,8 +24,7 @@ class Tag extends Model
     protected $table = 'tags';
     protected $primaryKey = 'id';
     public $timestamps = true;
-    // protected $guarded = ['id'];
-    protected $fillable = ['name', 'slug'];
+    protected $guarded = ['id'];
     // protected $hidden = [];
     // protected $dates = [];
 
@@ -45,6 +47,11 @@ class Tag extends Model
     | FUNCTIONS
     |--------------------------------------------------------------------------
     */
+
+    public static function primaryCacheKey(): string
+    {
+        return 'slug';
+    }
 
     /*
     |--------------------------------------------------------------------------

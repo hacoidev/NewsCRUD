@@ -2,7 +2,9 @@
 
 namespace Backpack\NewsCRUD\app\Http\Requests;
 
-class ArticleRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
+use \Backpack\CRUD\app\Http\Requests\CrudRequest;
+
+class ArticleRequest extends CrudRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -11,7 +13,6 @@ class ArticleRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
      */
     public function authorize()
     {
-        // only allow updates if the user is logged in
         return backpack_auth()->check();
     }
 
@@ -24,9 +25,9 @@ class ArticleRequest extends \Backpack\CRUD\app\Http\Requests\CrudRequest
     {
         return [
             'title' => 'required|min:2|max:255',
-            'slug' => 'unique:articles,slug,'.\Request::get('id'),
+            'slug' => 'unique:articles,slug,' . $this->id,
             'content' => 'required|min:2',
-            'date' => 'required|date',
+            'published_at' => 'required',
             'status' => 'required',
             'category_id' => 'required',
         ];
